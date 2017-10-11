@@ -1,6 +1,6 @@
 import os
 import multiprocessing
-from tracking import draw_video_tracking
+from fsds_utils.tracking import draw_video_tracking
 from amt_utils.mturk import pickle_this, unpickle_this
 
 
@@ -25,7 +25,7 @@ def perform_ds_operation (ds, operation):
 
 if __name__ == '__main__':
     # prod_dataset = unpickle_this( 'prod_dataset_10_6.pkl')
-    random_complete_sample = unpickle_this('rsample_1.pkl')
+    random_complete_sample = unpickle_this('rsample_1_update.pkl')
     # draw_video_tracking(random_complete_sample[0])
     _ = multimap(draw_video_tracking, random_complete_sample)
     # pickle_this(all_hits, 'latest_hit_group_8_19.pkl')
