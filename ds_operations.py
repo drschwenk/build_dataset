@@ -1,10 +1,14 @@
 import os
 import multiprocessing
-from fsds_utils.tracking import draw_video_tracking
-from amt_utils.mturk import pickle_this, unpickle_this
+from functools import partial
+from anigen_tools.mturk import unpickle_this
+from anigen_tools.interpolation import interpolate_all_video_entites
+from anigen_tools.tracking import track_all_video_entites
+from anigen_tools.frame_extraction import video_to_npy
+from anigen_tools.interpolation import draw_video_interps
+procs = os.cpu_count()
 
 
-procs = 8
 
 
 def multimap(method, iterable, *args):
@@ -19,13 +23,25 @@ def multimap(method, iterable, *args):
     return results
 
 
-def perform_ds_operation (ds, operation):
-    pass
+def perform_interpolation(videos):
+    complete_vids_all = unpickle_this('complete_vids_all.pkl')
+    complete_prod_dataset = unpickle_this('complete_prod_dataset.pkl')
+    # interp_func = partial(interpolate_all_video_entites, complete_prod_dataset)    
+    interp_func = partial(draw_video_interps, complete_prod_dataset)
+    _ = multimap(interp_func, videos)
+
+
+def perform_tracking(videos):
+    _ = multimap(track_all_video_entites, videos)
+
+
+def perform_frame_extraction(videos):
+    _ = multimap(video_to_npy, videos)
+
 
 
 if __name__ == '__main__':
-    # prod_dataset = unpickle_this( 'prod_dataset_10_6.pkl')
-    random_complete_sample = unpickle_this('rsample_1_update.pkl')
-    # draw_video_tracking(random_complete_sample[0])
-    _ = multimap(draw_video_tracking, random_complete_sample)
-    # pickle_this(all_hits, 'latest_hit_group_8_19.pkl')
+    complete_vids_all = unpickle_this('complete_vids_all.pkl')    
+    # perform_frame_extraction(complete_vids_all[:10])
+    perform_interpolation(complete_vids_all[:10])
+    # perform_tracking(complete_vids_all[:10])
