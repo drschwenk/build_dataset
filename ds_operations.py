@@ -41,7 +41,12 @@ def perform_frame_extraction(videos):
 
 
 if __name__ == '__main__':
-    complete_vids_all = unpickle_this('complete_vids_all.pkl')    
+    complete_vids_all = unpickle_this('complete_ds_checkpoint_v2p8_cleaned.pkl')    
+    with open('./overwritten') as f:
+        retrack_ids = f.readlines()
+        retrack_ids = [l.strip() for l in retrack_ids]
+        retrack_ids = set(['_'.join(l.split('_')[:7]) for l in retrack_ids])
+    vids_to_do = [v for v in complete_vids_all if v.gid() in retrack_ids]
     # perform_frame_extraction(complete_vids_all[:10])
-    perform_interpolation(complete_vids_all[:10])
-    # perform_tracking(complete_vids_all[:10])
+    # perform_interpolation(complete_vids_all[:10])
+    perform_tracking(vids_to_do)
